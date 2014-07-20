@@ -1,0 +1,70 @@
+Reproducible Research Peer Assignment 1
+========================================================
+Loading and preprocessing the data
+
+
+```{r,cache=TRUE}
+fileUrl <-"https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+download.file(fileUrl, destfile = "activity.zip", method = "curl")
+unzip("activity.zip")
+activity <- read.csv("activity.csv")
+```
+
+Here is the mean total number of steps taken per day?
+
+```{r,echo=FALSE}
+totalSteps <- aggregate(steps ~ date, data = activity, sum)
+meanStepsperDay <- mean(totalSteps$steps)
+meanStepsperDay
+```
+
+Here is a histogram of the total number of steps taken each day
+```{r fig.width=7, fig.height=6,echo=FALSE}
+hist(activity$steps,main='Total steps per day',xlab='Steps per day', col='blue')
+```
+Mean and Median total number of steps taken per day
+
+
+```{r,echo=FALSE}
+mean(totalSteps$steps)
+median(totalSteps$steps)
+```
+
+Here is the average daily activity pattern?
+```{r fig.width=7, fig.height=6,echo=FALSE}
+avgInterval <- aggregate (steps ~ interval, data = activity, mean, na.rm = TRUE)
+plot(steps ~ interval, data = avgInterval, type = "l", main='Average Daily Activity')
+
+```
+Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r}
+maxInterval <- avgInterval[which.max(avgInterval$steps), ]$interval
+maxInterval
+
+```
+Imputing missing values:
+Total missing values
+```{r}
+missing <- sum(is.na(activity))
+missing
+```
+Filling the missing values
+```{r}
+newActivity = activity
+newActivity[is.na(newActivity)] <- mean(totalSteps$steps)
+summary(newActivity)
+```
+
+Create histogram and new mean and median
+```{r fig.width=7, fig.height=6}
+newSteps <- aggregate(steps ~ date, data = newActivity, sum)
+hist(newSteps$steps,main='New steps per day',xlab='Steps per day', col='blue')
+mean(newSteps$steps)
+median(newSteps$steps)
+
+```
+Are there any difference in Activity patterns ? 
+```{r}
+
+
+```
